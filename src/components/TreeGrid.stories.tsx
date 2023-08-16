@@ -14,8 +14,8 @@ type Story = StoryObj<typeof TreeGrid>
 export const Country: Story = {
     args: {
         columns: [
-            { id: 'country', header: 'Country' },
-            { id: 'postCode', header: 'Post Code' },
+            { key: 'country', header: 'Country' },
+            { key: 'postCode', header: 'Post Code' },
         ],
     },
 }

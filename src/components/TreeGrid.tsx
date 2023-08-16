@@ -1,55 +1,104 @@
+import { clsx } from 'clsx'
 import { Key, ReactNode } from 'react'
 import classes from './TreeGrid.module.css'
 
-const REPEAT_COUNT = '--repeat-count'
-
-interface Column {
-    id: Key
+interface Column<TData> {
+    key: Key
     header: ReactNode
+    renderData(data: TData): ReactNode
 }
 
-interface TreeGridProps {
-    columns: Column[]
-    dataArray?: [] | null | undefined
+interface HeadProps<TData> {
+    columns: Column<TData>[]
+    className?: string
+}
+
+function Head<TData>({ columns, className }: HeadProps<TData>) {
+    return (
+        <div role="row" className={clsx(classes.contents, className)}>
+            {columns.map(({ header, key }) => (
+                <div role="columnheader" key={key}>
+                    {header}
+                </div>
+            ))}
+        </div>
+    )
+}
+
+interface BodyProps<TData> {
+    columns: Column<TData>[]
+    datas: TData[]
+    getKey(data: TData): Key
+    getClassName?: (data: TData) => string
+}
+
+function Body<TData>({ columns, datas, getKey, getClassName }: BodyProps<TData>) {
+    return (
+        <>
+            {datas.map((data) => (
+                <div
+                    role="row"
+                    className={clsx(classes.contents, getClassName?.(data))}
+                    key={getKey(data)}
+                >
+                    {columns.map(({ key, renderData }) => (
+                        <div role="gridcell" key={key}>
+                            {renderData(data)}
+                        </div>
+                    ))}
+                </div>
+            ))}
+        </>
+    )
+}
+
+interface EmptyProps {
     children?: ReactNode
 }
 
-function TreeGrid({ columns, dataArray, children }: TreeGridProps) {
+function Empty({ children }: EmptyProps) {
     return (
-        <div
-            className={classes.container}
-            style={{ [REPEAT_COUNT]: columns.length }}
-        >
-            <div role="treegrid" className={classes.treeGrid}>
-                <div role="rowgroup" className={classes.rowGroup}>
-                    <div role="row" className={classes.row}>
-                        {columns.map(({ id, header }) => (
-                            <div
-                                role="columnheader"
-                                className={classes.columnHeader}
-                                key={id}
-                            >
-                                {header}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                {Array.isArray(dataArray) && dataArray.length > 0 ? null : (
-                    <div role="row" className={classes.row}>
-                        <div
-                            role="gridcell"
-                            className={classes.gridCellSpanFull}
-                        >
-                            {children}
-                        </div>
-                    </div>
-                )}
+        <div role="row" className={classes.contents}>
+            <div role="gridcell" className={classes.colSpanFull}>
+                {children}
             </div>
         </div>
     )
 }
 
+const REPEAT_COUNT = '--repeat-count'
+
+interface TreeGridProps<TData> extends HeadProps<TData>, BodyProps<TData>, EmptyProps {
+    headClassName?: string
+}
+
+function TreeGrid<TData>({
+    columns,
+    datas,
+    children,
+    className,
+    headClassName,
+    getKey,
+    getClassName,
+}: TreeGridProps<TData>) {
+    return (
+        <div
+            role="treegrid"
+            className={clsx(classes.grid, className)}
+            style={{ [REPEAT_COUNT]: columns.length }}
+        >
+            <Head columns={columns} className={headClassName} />
+            {Array.isArray(datas) && datas.length > 0 ? (
+                <Body columns={columns} datas={datas} getKey={getKey} getClassName={getClassName} />
+            ) : (
+                <Empty>{children}</Empty>
+            )}
+        </div>
+    )
+}
+
 export default TreeGrid
+export {}
 
 declare module 'csstype' {
     interface Properties {
