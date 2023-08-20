@@ -148,7 +148,7 @@ function TreeGrid<TData>({
 
 export default TreeGrid
 export { VisibleContext }
-export type { Column, VisibleState }
+export type { Column, TreeGridProps, VisibleState }
 
 declare module 'csstype' {
     interface Properties {
