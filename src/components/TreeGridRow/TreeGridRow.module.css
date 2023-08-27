@@ -1,0 +1,33 @@
+.row {
+    position: relative;
+}
+
+.hover {
+    background-color: #213547;
+}
+
+.hover:first-child::before,
+.hover:last-child::after {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 0.5rem;
+    content: ' ';
+    background-color: inherit;
+}
+
+.hover:first-child::before {
+    right: 100%;
+    border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.hover:last-child::after {
+    left: 100%;
+    border-radius: 0 0.5rem 0.5rem 0;
+}
+
+@media (prefers-color-scheme: light) {
+    .hover {
+        background-color: rgb(255 255 255 / 87%);
+    }
+}
