@@ -2,6 +2,10 @@
     position: relative;
 }
 
+.pointer {
+    cursor: pointer;
+}
+
 .hover {
     background-color: #213547;
 }

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import type { MouseEvent } from 'react'
 import type { Column } from '../types'
 import TreeGrid from './TreeGrid'
 
@@ -27,7 +28,8 @@ const actionColumn: Column<Country> = {
     key: 'action',
     width: 87,
     render(_, [isHover]) {
-        function handleClick() {
+        function handleClick(event: MouseEvent) {
+            event.stopPropagation()
             console.log('action')
         }
         return (
@@ -36,6 +38,10 @@ const actionColumn: Column<Country> = {
             </button>
         )
     },
+}
+
+function handleCountryClick() {
+    console.log('country')
 }
 
 export const Default: Story<Country> = {
@@ -49,5 +55,13 @@ export const Action: Story<Country> = {
     args: {
         columns: countryColumns.concat(actionColumn),
         data: countryData,
+    },
+}
+
+export const Click: Story<Country> = {
+    args: {
+        columns: countryColumns.concat(actionColumn),
+        data: countryData,
+        onRowClick: handleCountryClick,
     },
 }

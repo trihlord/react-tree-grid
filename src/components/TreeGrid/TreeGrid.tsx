@@ -11,16 +11,23 @@ interface Props<TData> {
     data: TData[] | null | undefined
     children?: ReactNode
     headHidden?: boolean
+    onRowClick?(data: TData): void
 }
 
-export default function TreeGrid<TData>({ columns, data, children, headHidden }: Props<TData>) {
-    const dataPresent = Array.isArray(data) && data.length > 0
+export default function TreeGrid<TData>({
+    columns,
+    data,
+    children,
+    headHidden,
+    onRowClick,
+}: Props<TData>) {
+    const hasData = Array.isArray(data) && data.length > 0
     return (
         <table className={classes.table}>
             <TreeGridColgroup columns={columns} />
             <TreeGridHead columns={columns} hidden={headHidden} />
-            {dataPresent ? (
-                <TreeGridBody columns={columns} data={data} />
+            {hasData ? (
+                <TreeGridBody columns={columns} data={data} onRowClick={onRowClick} />
             ) : (
                 <TreeGridEmpty>{children}</TreeGridEmpty>
             )}
